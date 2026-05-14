@@ -74,10 +74,21 @@ export default function ExpenseForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-2xl shadow-md mb-8"
+      className="mb-8 rounded-2xl border border-[#E5D3B7] bg-white p-5 shadow-[0_18px_45px_rgba(0,0,0,0.08)] sm:p-6"
     >
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="mb-5 flex items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-[#4A3428]">
+            {editingExpense ? "Edit expense" : "Add expense"}
+          </h2>
+          <p className="text-sm text-[#9A8478]">
+            Keep your spending records tidy and up to date.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
 
         <input
           type="text"
@@ -85,7 +96,7 @@ export default function ExpenseForm({
           placeholder="Expense title"
           value={form.title}
           onChange={handleChange}
-          className="border p-3 rounded-lg"
+          className="rounded-xl border border-[#E5D3B7] bg-[#FFF8F3] p-3 text-[#4A3428] outline-none transition placeholder:text-[#9A8478] focus:border-[#8B593E] focus:bg-white focus:ring-4 focus:ring-[#8B593E]/10"
           required
         />
 
@@ -95,7 +106,7 @@ export default function ExpenseForm({
           placeholder="Amount"
           value={form.amount}
           onChange={handleChange}
-          className="border p-3 rounded-lg"
+          className="rounded-xl border border-[#E5D3B7] bg-[#FFF8F3] p-3 text-[#4A3428] outline-none transition placeholder:text-[#9A8478] focus:border-[#8B593E] focus:bg-white focus:ring-4 focus:ring-[#8B593E]/10"
           required
         />
 
@@ -105,7 +116,7 @@ export default function ExpenseForm({
           placeholder="Category"
           value={form.category}
           onChange={handleChange}
-          className="border p-3 rounded-lg"
+          className="rounded-xl border border-[#E5D3B7] bg-[#FFF8F3] p-3 text-[#4A3428] outline-none transition placeholder:text-[#9A8478] focus:border-[#8B593E] focus:bg-white focus:ring-4 focus:ring-[#8B593E]/10"
           required
         />
 
@@ -114,7 +125,7 @@ export default function ExpenseForm({
           name="date"
           value={form.date}
           onChange={handleChange}
-          className="border p-3 rounded-lg"
+          className="rounded-xl border border-[#E5D3B7] bg-[#FFF8F3] p-3 text-[#4A3428] outline-none transition placeholder:text-[#9A8478] focus:border-[#8B593E] focus:bg-white focus:ring-4 focus:ring-[#8B593E]/10"
           required
         />
 
@@ -122,7 +133,7 @@ export default function ExpenseForm({
 
       <button
         type="submit"
-        className="mt-6 bg-black text-white px-6 py-3 rounded-xl hover:opacity-90 transition"
+        className="mt-6 rounded-xl bg-[#8B593E] px-6 py-3 font-semibold text-white shadow-[0_10px_24px_rgba(139,89,62,0.24)] transition hover:bg-[#754A34] focus:outline-none focus:ring-4 focus:ring-[#8B593E]/20"
       >
         {editingExpense ? "Update Expense" : "Add Expense"}
       </button>
