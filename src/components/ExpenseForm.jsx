@@ -1,9 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
   createExpense,
   updateExpense
 } from "../api/expenseApi";
+
+const emptyForm = {
+  title: "",
+  amount: "",
+  category: "",
+  date: ""
+};
 
 export default function ExpenseForm({
   onAdd,
@@ -11,21 +18,7 @@ export default function ExpenseForm({
   onUpdate
 }) {
 
-  const [form, setForm] = useState({
-    title: "",
-    amount: "",
-    category: "",
-    date: ""
-  });
-
-  // LOAD DATA INTO FORM WHEN EDITING
-  useEffect(() => {
-
-    if (editingExpense) {
-      setForm(editingExpense);
-    }
-
-  }, [editingExpense]);
+  const [form, setForm] = useState(editingExpense || emptyForm);
 
   const handleChange = (e) => {
 
@@ -63,12 +56,7 @@ export default function ExpenseForm({
     }
 
     // RESET FORM
-    setForm({
-      title: "",
-      amount: "",
-      category: "",
-      date: ""
-    });
+    setForm(emptyForm);
   };
 
   return (
