@@ -3,12 +3,16 @@ import * as React from "react";
 export function Card({ className = "", ...props }) {
   return (
     <div
-      className={`rounded border border-slate-200 bg-white shadow-sm ${className}`.trim()}
+      className={`panel ${className}`.trim()}
       {...props}
     />
   );
 }
 
 export function CardContent({ className = "", ...props }) {
-  return <div className={className} {...props} />;
+  return <div className={`p-6 ${className}`.trim()} {...props} />;
+}
+
+export function CardHeader({ className = "", ...props }) {
+  return <div className={`panel-header ${className}`.trim()} {...props} />;
 }

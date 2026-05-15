@@ -10,7 +10,7 @@ export function Select({ children, className = "", onValueChange, onChange, ...p
     <select
       {...props}
       onChange={handleChange}
-      className={`border p-2 rounded ${className}`.trim()}
+      className={`mf-select ${className}`.trim()}
     >
       {children}
     </select>
