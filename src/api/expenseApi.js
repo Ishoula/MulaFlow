@@ -1,73 +1,65 @@
-import axios from "axios";
+import api from "./axios"; // IMPORTANT: your JWT-enabled axios instance
 
-const BASE_URL = "http://localhost:2727/api/expenses";
+const BASE_URL = "/expenses";
 
-export const getExpenses = () => axios.get(BASE_URL);
+/* ========================
+   BASIC CRUD
+======================== */
 
-export const getAllExpenses = async () => {
-  const res = await axios.get(BASE_URL);
-  return res.data;
-};
+export const getExpenses = () =>
+  api.get(BASE_URL).then(res => res.data);
 
-export const createExpense = (expense) => axios.post(BASE_URL, expense);
+export const createExpense = (expense) =>
+  api.post(BASE_URL, expense).then(res => res.data);
 
-export const deleteExpense = (id) => axios.delete(`${BASE_URL}/${id}`);
+export const deleteExpense = (id) =>
+  api.delete(`${BASE_URL}/${id}`);
 
 export const updateExpense = (id, expense) =>
-  axios.put(`${BASE_URL}/${id}`, expense);
+  api.put(`${BASE_URL}/${id}`, expense).then(res => res.data);
 
-export const getByCategory = async (category) => {
-  const res = await fetch(`${BASE_URL}/category/${category}`);
-  return res.json();
-};
+/* ========================
+   FILTERS / QUERIES
+======================== */
 
-export const getAboveAmount = async (amount) => {
-  const res = await fetch(`${BASE_URL}/above/${amount}`);
-  return res.json();
-};
+export const getByCategory = (category) =>
+  api.get(`${BASE_URL}/category/${category}`).then(res => res.data);
 
-export const getByDateRange = async (start, end) => {
-  const res = await fetch(
-    `${BASE_URL}/range?start=${start}&end=${end}`
-  );
-  return res.json();
-};
+export const getAboveAmount = (amount) =>
+  api.get(`${BASE_URL}/above/${amount}`).then(res => res.data);
 
-export const getTotalExpenses = async () => {
-  const res = await fetch(`${BASE_URL}/total`);
-  return res.json();
-};
+export const getByDateRange = (start, end) =>
+  api
+    .get(`${BASE_URL}/range`, { params: { start, end } })
+    .then(res => res.data);
 
-export const getHighestExpense = async () => {
-  const res = await fetch(`${BASE_URL}/highest`);
-  return res.json();
-};
+/* ========================
+   STATS
+======================== */
 
-export const getMonthlyTotal = async (month, year) => {
-  const res = await fetch(
-    `${BASE_URL}/monthly?month=${month}&year=${year}`
-  );
-  return res.json();
-};
+export const getTotalExpenses = () =>
+  api.get(`${BASE_URL}/total`).then(res => res.data);
 
-export const getPaginatedExpenses = async (
+export const getHighestExpense = () =>
+  api.get(`${BASE_URL}/highest`).then(res => res.data);
+
+export const getMonthlyTotal = (month, year) =>
+  api
+    .get(`${BASE_URL}/monthly`, { params: { month, year } })
+    .then(res => res.data);
+
+/* ========================
+   PAGINATION
+======================== */
+
+export const getPaginatedExpenses = (
   page = 0,
   size = 5,
   sortBy = "date",
   direction = "desc"
-) => {
-  const params = new URLSearchParams({
-    page,
-    size,
-    sortBy,
-    direction,
-  });
-
-  const res = await fetch(`${BASE_URL}/paginated?${params}`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to load paginated expenses: ${res.status}`);
-  }
-
-  return res.json();
-};
+) =>
+  api
+    .get(`${BASE_URL}/page`, {
+      params: { page, size, sort: `${sortBy},${direction}` },
+    })
+    .then(res => res.data);
