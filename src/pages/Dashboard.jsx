@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   createExpense,
-  deleteExpense,
   getTotalExpenses,
   getHighestExpense,
   getMonthlyTotal,
   getPaginatedExpenses,
 } from "@/api/expenseApi";
+import DashboardLayout from "@/components/DashboardLayout";
+import { getStoredName } from "@/components/Navbar";
+import { CURRENCY } from "@/constants/currency";
+import { EXPENSE_CATEGORIES } from "@/constants/expenses";
 
 import {
   Card,
@@ -19,20 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectItem,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-
-import {
   BarChart,
   Bar,
   XAxis,
@@ -41,41 +29,6 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-
-const CATEGORIES = ["Food", "Transport", "Tech", "Entertainment"];
-
-const getStoredName = () => {
-  const storedName = localStorage.getItem("name");
-
-  return storedName && storedName !== "undefined" && storedName !== "null"
-    ? storedName
-    : "User";
-};
-
-const NavLink = ({ children, icon, active, onClick }) => (
-  <button
-    onClick={onClick}
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      padding: "10px 16px",
-      borderRadius: 10,
-      fontSize: "13px",
-      fontWeight: 600,
-      color: active ? "white" : "rgba(255,255,255,0.55)",
-      background: active ? "rgba(255,255,255,0.08)" : "transparent",
-      border: "none",
-      cursor: "pointer",
-      width: "100%",
-      textAlign: "left",
-      marginBottom: 4,
-    }}
-  >
-    <span style={{ fontSize: 16 }}>{icon}</span>
-    {children}
-  </button>
-);
 
 const StatCard = ({ label, value, sub, icon, trend }) => (
   <Card>
@@ -98,13 +51,11 @@ const StatCard = ({ label, value, sub, icon, trend }) => (
 );
 
 export default function ExpenseDashboard() {
-  const navigate = useNavigate();
-
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [size, setSize] = useState(5);
-  const [sortBy, setSortBy] = useState("date");
+  const [page] = useState(0);
+  const [size] = useState(5);
+  const [sortBy] = useState("date");
   const [direction] = useState("desc");
 
   const [total, setTotal] = useState(0);
@@ -121,35 +72,18 @@ export default function ExpenseDashboard() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  const [categoryFilter, setCategoryFilter] = useState("");
-
   const loadExpenses = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const data = await getPaginatedExpenses(
-        page,
-        size,
-        sortBy,
-        direction
-      );
-
-      const content = data.content ?? data;
-
-      setExpenses(content || []);
+      const data = await getPaginatedExpenses(page, size, sortBy, direction);
+      setExpenses(data.content ?? data ?? []);
     } catch {
       setError("Failed to load expenses");
     } finally {
       setLoading(false);
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("name");
-    localStorage.removeItem("email");
-    navigate("/login");
   };
 
   const loadStats = async () => {
@@ -158,13 +92,7 @@ export default function ExpenseDashboard() {
 
       setTotal(await getTotalExpenses());
       setHighest(await getHighestExpense());
-
-      setMonthly(
-        await getMonthlyTotal(
-          now.getMonth() + 1,
-          now.getFullYear()
-        )
-      );
+      setMonthly(await getMonthlyTotal(now.getMonth() + 1, now.getFullYear()));
     } catch {
       setTotal(0);
       setHighest(null);
@@ -191,16 +119,6 @@ export default function ExpenseDashboard() {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteExpense(id);
-      loadExpenses();
-      loadStats();
-    } catch {
-      setError("Failed to delete expense");
-    }
-  };
-
   useEffect(() => {
     loadExpenses();
   }, [page, size, sortBy]);
@@ -209,13 +127,9 @@ export default function ExpenseDashboard() {
     loadStats();
   }, []);
 
-  const filtered = categoryFilter
-    ? expenses.filter((e) => e.category === categoryFilter)
-    : expenses;
-
-  const chartData = expenses.map((e) => ({
-    name: e.title?.slice(0, 6),
-    amount: e.amount,
+  const chartData = expenses.map((expense) => ({
+    name: expense.title?.slice(0, 6),
+    amount: expense.amount,
   }));
 
   if (loading) {
@@ -223,160 +137,92 @@ export default function ExpenseDashboard() {
   }
 
   return (
-    <div className="dash-layout">
-
-      {/* SIDEBAR */}
-      <aside className="dash-sidebar">
-        <div style={{ padding: 24 }}>
-          <h2 style={{ color: "white" }}>MulaFlow</h2>
-        </div>
-
-        <nav style={{ padding: 16 }}>
-          <NavLink icon="📊" active>
-            Dashboard
-          </NavLink>
-
-          <NavLink icon="💸">Expenses</NavLink>
-
-          <NavLink icon="⚙️">Settings</NavLink>
-
-          <NavLink icon="🚪" onClick={logout}>
-            Logout
-          </NavLink>
-        </nav>
-
-        <div style={{ padding: 24, color: "white" }}>
-          👤 {name}
-        </div>
-      </aside>
-
-      {/* MAIN */}
-      <main className="dash-main">
-
-        {/* HEADER */}
-        <div style={{ marginBottom: 30 }}>
-          <h1>
-            Welcome back, {name}
-          </h1>
+    <DashboardLayout>
+      <div className="page-header">
+        <div>
+          <h1>Welcome back, {name}</h1>
           <p>Your financial overview</p>
         </div>
+      </div>
 
-        {error && (
-          <div style={{ color: "red", marginBottom: 20 }}>
-            {error}
-          </div>
-        )}
+      {error && <div className="error-banner">{error}</div>}
 
-        {/* STATS */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: 20,
-            marginBottom: 30,
-          }}
-        >
-          <StatCard
-            label="Total"
-            value={`KES ${total}`}
-            sub="All expenses"
-            icon="💰"
-          />
+      <div className="stats-grid">
+        <StatCard
+          label="Total"
+          value={`${CURRENCY} ${total}`}
+          sub="All expenses"
+          icon={CURRENCY}
+        />
 
-          <StatCard
-            label="Highest"
-            value={`KES ${highest?.amount || 0}`}
-            sub={highest?.title || "None"}
-            icon="📌"
-          />
+        <StatCard
+          label="Highest"
+          value={`${CURRENCY} ${highest?.amount || 0}`}
+          sub={highest?.title || "None"}
+          icon="Max"
+        />
 
-          <StatCard
-            label="Monthly"
-            value={`KES ${monthly}`}
-            sub="This month"
-            icon="📅"
-          />
-        </div>
+        <StatCard
+          label="Monthly"
+          value={`${CURRENCY} ${monthly}`}
+          sub="This month"
+          icon="30d"
+        />
+      </div>
 
-        {/* FORM */}
-        <Card>
-          <CardHeader>Quick Add</CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>Quick Add</CardHeader>
+        <CardContent>
+          <div className="quick-add-form">
             <Input
               placeholder="Title"
               value={form.title}
-              onChange={(e) =>
-                setForm({ ...form, title: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
             />
 
             <Input
               type="number"
               placeholder="Amount"
               value={form.amount}
-              onChange={(e) =>
-                setForm({ ...form, amount: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, amount: e.target.value })}
             />
 
-            <Button onClick={handleCreate}>
-              Add Expense
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* TABLE */}
-        <Card style={{ marginTop: 20 }}>
-          <CardHeader>Expenses</CardHeader>
-
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {filtered.map((e) => (
-                <TableRow key={e.id}>
-                  <TableCell>{e.title}</TableCell>
-                  <TableCell>{e.amount}</TableCell>
-                  <TableCell>
-                    <Badge>{e.category}</Badge>
-                  </TableCell>
-                  <TableCell>{e.date}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => handleDelete(e.id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
+            <select
+              className="mf-select"
+              value={form.category}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+            >
+              {EXPENSE_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
-            </TableBody>
-          </Table>
-        </Card>
+            </select>
 
-        {/* CHART */}
-        <Card style={{ marginTop: 20 }}>
-          <CardHeader>Chart</CardHeader>
+            <Input
+              type="date"
+              value={form.date}
+              onChange={(e) => setForm({ ...form, date: e.target.value })}
+            />
 
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={chartData}>
-              <CartesianGrid />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="amount" fill="#000" />
-            </BarChart>
-          </ResponsiveContainer>
-        </Card>
-      </main>
-    </div>
+            <Button onClick={handleCreate}>Add Expense</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card style={{ marginTop: 20 }}>
+        <CardHeader>Recent spending</CardHeader>
+
+        <ResponsiveContainer width="100%" height={250}>
+          <BarChart data={chartData}>
+            <CartesianGrid />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="amount" fill="#000" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Card>
+    </DashboardLayout>
   );
 }

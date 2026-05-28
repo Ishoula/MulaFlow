@@ -8,77 +8,136 @@ export default function Register() {
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      await registerUser(form);
+      setLoading(true);
+      setError("");
 
-      alert("Account created successfully");
+      await registerUser(form);
 
       navigate("/login");
 
-    } catch (err) {
-      alert("Registration failed");
+    } catch {
+      setError("Registration failed. Check your details and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white/10 p-8 rounded-2xl w-96 backdrop-blur-xl border border-white/10"
-      >
-        <h1 className="text-2xl font-bold mb-6">Register</h1>
-
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full p-3 mb-4 rounded bg-black/40 border border-white/10"
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full p-3 mb-4 rounded bg-black/40 border border-white/10"
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full p-3 mb-6 rounded bg-black/40 border border-white/10"
-          onChange={handleChange}
-          required
-        />
-
-        <button className="w-full bg-white text-black py-3 rounded-xl font-semibold">
-          Create Account
+    <div className="auth-page">
+      <section className="auth-panel">
+        <button
+          className="auth-brand"
+          type="button"
+          onClick={() => navigate("/")}
+        >
+          <span>M</span>
+          MulaFlow
         </button>
 
-        <p className="text-sm text-gray-400 mt-4 text-center">
-          Already have an account?
-          <span
-            className="text-white cursor-pointer"
-            onClick={() => navigate("/login")}
-          >
-            {" "}Login
-          </span>
-        </p>
-      </form>
+        <div className="auth-copy">
+          <p className="auth-kicker">Start tracking</p>
+          <h1>Build better money habits</h1>
+          <p>
+            Create your workspace, capture expenses, and turn daily spending
+            into a clearer financial picture.
+          </p>
+        </div>
+
+        <div className="auth-metrics" aria-label="MulaFlow benefits">
+          <div>
+            <strong>3</strong>
+            <span>Core insights</span>
+          </div>
+          <div>
+            <strong>Fast</strong>
+            <span>Expense capture</span>
+          </div>
+        </div>
+      </section>
+
+      <main className="auth-form-wrap">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="auth-form-header">
+            <p className="auth-kicker">Sign up</p>
+            <h2>Create your account</h2>
+          </div>
+
+          {error && <div className="error-banner">{error}</div>}
+
+          <label className="auth-field">
+            <span>Full name</span>
+            <input
+              type="text"
+              name="name"
+              placeholder="Your name"
+              value={form.name}
+              onChange={handleChange}
+              autoComplete="name"
+              required
+            />
+          </label>
+
+          <label className="auth-field">
+            <span>Email address</span>
+            <input
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              value={form.email}
+              onChange={handleChange}
+              autoComplete="email"
+              required
+            />
+          </label>
+
+          <label className="auth-field">
+            <span>Password</span>
+            <div className="password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Create a password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          </label>
+
+          <button className="auth-submit" type="submit" disabled={loading}>
+            {loading ? "Creating account..." : "Create account"}
+          </button>
+
+          <p className="auth-switch">
+            Already have an account?
+            <button type="button" onClick={() => navigate("/login")}>
+              Sign in
+            </button>
+          </p>
+        </form>
+      </main>
     </div>
   );
 }
