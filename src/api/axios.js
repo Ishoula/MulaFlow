@@ -1,7 +1,12 @@
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const BASE_URL = process.env.BASE_URL 
 
 const api = axios.create({
-  baseURL: "http://localhost:2727/api",
+  baseURL: BASE_URL,
 });
 
 // 🔐 INTERCEPTOR (AUTO ATTACH TOKEN)
