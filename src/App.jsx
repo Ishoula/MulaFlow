@@ -7,6 +7,8 @@ import AddExpense from "./pages/AddExpense";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AddReminder from "./pages/AddReminder";
+import AlertsPage from "./pages/AlertsPage";
 function App() {
 
   return (
@@ -45,6 +47,22 @@ function App() {
           }
         />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/reminders/new"
+          element={
+            <ProtectedRoute>
+              <AddReminder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute>
+              <AlertsPage />
+            </ProtectedRoute>
+          }
+        />
 
       </Routes>
 

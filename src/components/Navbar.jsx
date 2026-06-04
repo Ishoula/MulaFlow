@@ -12,6 +12,8 @@ const navItems = [
   { to: "/dashboard", icon: "▣", label: "Dashboard" },
   { to: "/expenses", icon: "$", label: "Expenses" },
   { to: "/expenses/new", icon: "+", label: "Add expense" },
+  { to:"/reminders/new", icon: "⏰", label: "Reminders" },
+  { to:"/alerts", icon: "🔔", label: "Alerts" }
 ];
 
 export default function Navbar() {
