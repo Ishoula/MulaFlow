@@ -50,6 +50,7 @@ function AddReminder() {
             onChange={(e) => setInterval(Number(e.target.value))}
             style={styles.select}
           >
+            <option value={1}>Every 1 minute</option>
             <option value={15}>Every 15 minutes</option>
             <option value={30}>Every 30 minutes</option>
             <option value={60}>Every 1 hour</option>
