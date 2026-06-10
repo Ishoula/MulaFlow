@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { getDueReminders } from "../api/reminder";
+import {
+  Bell,
+  BellRing,
+  RefreshCw,
+  CheckCircle2,
+  CircleAlert,
+  CalendarDays,
+  Wallet,
+} from "lucide-react";
+import DashboardLayout from "@/components/DashboardLayout";
+
+import {
+  getReminders,
+  markReminderAsRead,
+} from "../api/reminder";
 
 const AlertsPage = () => {
   const [alerts, setAlerts] = useState([]);
@@ -11,7 +25,7 @@ const AlertsPage = () => {
       setLoading(true);
       setError("");
 
-      const data = await getDueReminders();
+      const data = await getReminders();
       setAlerts(data);
     } catch (err) {
       console.error(err);
@@ -21,52 +35,145 @@ const AlertsPage = () => {
     }
   };
 
+  const handleMarkAsRead = async (id) => {
+    try {
+      await markReminderAsRead(id);
+
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert.id === id
+            ? { ...alert, readStatus: true }
+            : alert
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchAlerts();
   }, []);
 
   if (loading) {
-    return <div style={{ padding: "20px" }}>Loading alerts...</div>;
+    return (
+      <div className="empty-state">
+        Loading alerts...
+      </div>
+    );
   }
 
   if (error) {
-    return <div style={{ padding: "20px", color: "red" }}>{error}</div>;
+    return (
+      <div className="alerts-error">
+        <CircleAlert size={18} />
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>🔔 Alerts</h1>
-      <button onClick={fetchAlerts} style={{ marginBottom: "10px" }}>
-  🔄 Refresh
-     </button>
+    <DashboardLayout>
+      <div className="alerts-page">
+        <div className="alerts-header">
+          <div className="alerts-header-left">
+            <div className="alerts-title">
+              <Bell size={28} />
 
-      {alerts.length === 0 ? (
-        <p>No alerts for now 🎉</p>
-      ) : (
-        alerts.map((alert, index) => (
-          <div
-            key={index}
-            style={{
-              border: "1px solid #ddd",
-              padding: "15px",
-              marginTop: "10px",
-              borderRadius: "8px",
-              background: "#fafafa",
-            }}
-          >
-            <h3>{alert.message}</h3>
+              <h1>Alerts</h1>
 
-            <p style={{ margin: "5px 0", color: "#555" }}>
-              Email: {alert.email}
-            </p>
+              <span className="alerts-count">
+                {
+                  alerts.filter(
+                    (alert) => !alert.readStatus
+                  ).length
+                }
+              </span>
+            </div>
 
-            <p style={{ margin: "5px 0", fontWeight: "bold" }}>
-              Monthly Total: {alert.monthlyTotal}
+            <p className="alerts-subtitle">
+              Spending notifications and reminders
             </p>
           </div>
-        ))
-      )}
-    </div>
+
+          <button
+            className="mf-btn mf-btn-primary"
+            onClick={fetchAlerts}
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+        </div>
+
+        {alerts.length === 0 ? (
+          <div className="panel alerts-empty">
+            <CheckCircle2 size={48} />
+            <h3>No alerts available</h3>
+            <p>You're all caught up.</p>
+          </div>
+        ) : (
+          <div className="alerts-grid">
+            {alerts.map((alert) => (
+              <div
+                key={alert.id}
+                className={`panel alert-card ${alert.readStatus
+                    ? "alert-read"
+                    : "alert-unread"
+                  }`}
+              >
+                <div className="alert-meta">
+                  <span className="alert-status">
+                    {alert.readStatus ? (
+                      <>
+                        <CheckCircle2 size={14} />
+                        Read
+                      </>
+                    ) : (
+                      <>
+                        <BellRing size={14} />
+                        Unread
+                      </>
+                    )}
+                  </span>
+
+                  <span className="alert-date">
+                    {alert.createdAt
+                      ? new Date(
+                        alert.createdAt
+                      ).toLocaleDateString()
+                      : "N/A"}
+                  </span>
+                </div>
+
+                <h3 className="alert-message">
+                  {alert.message}
+                </h3>
+
+                <div className="alert-stats">
+                  <div className="alert-stat">
+                    <Wallet size={16} />
+                    <span>Monthly Total</span>
+                    <strong>{alert.monthlyTotal}</strong>
+                  </div>
+                </div>
+
+                {!alert.readStatus && (
+                  <button
+                    className="mf-btn mf-btn-primary"
+                    onClick={() =>
+                      handleMarkAsRead(alert.id)
+                    }
+                  >
+                    <CheckCircle2 size={16} />
+                    Mark as Read
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 };
 

@@ -1,11 +1,11 @@
 import api from "./axios";
 
 /**
- * Set or update reminder settings
+ * Enable or disable reminders
  */
 export const setReminder = async (enabled, intervalMinutes) => {
   try {
-    const response = await api.post("/reminders", null, {
+    const response = await api.post("/reminders/settings", null, {
       params: {
         enabled,
         intervalMinutes,
@@ -14,18 +14,59 @@ export const setReminder = async (enabled, intervalMinutes) => {
 
     return response.data;
   } catch (error) {
-    throw error.response?.data || "Failed to set reminder";
+    throw error.response?.data || "Failed to update reminder settings";
   }
 };
 
-export const getDueReminders = async () => {
+/**
+ * Get all reminders for the logged-in user
+ */
+export const getReminders = async () => {
   try {
-    const res = await api.get("/reminders/due");
-     return res.data;
-    
+    const response = await api.get("/reminders");
+    return response.data;
   } catch (error) {
-    console.error("Error fetching due reminders:", error);
-    window.alert("Failed to load reminders: " + (error.message || "Unknown error"));
-    return [];
+    console.error("Error fetching reminders:", error);
+    throw error.response?.data || "Failed to fetch reminders";
+  }
+};
+
+/**
+ * Get unread reminders only
+ */
+export const getUnreadReminders = async () => {
+  try {
+    const response = await api.get("/reminders/unread");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching unread reminders:", error);
+    throw error.response?.data || "Failed to fetch unread reminders";
+  }
+};
+
+/**
+ * Mark a single reminder as read
+ */
+export const markReminderAsRead = async (id) => {
+  try {
+    const response = await api.patch(`/reminders/${id}/read`);
+    return response.data;
+  } catch (error) {
+    console.error("Error marking reminder as read:", error);
+    throw error.response?.data || "Failed to mark reminder as read";
+  }
+};
+
+/**
+ * Mark all reminders as read
+ * (Only if you added the backend endpoint)
+ */
+export const markAllRemindersAsRead = async () => {
+  try {
+    const response = await api.patch("/reminders/read-all");
+    return response.data;
+  } catch (error) {
+    console.error("Error marking all reminders as read:", error);
+    throw error.response?.data || "Failed to mark all reminders as read";
   }
 };

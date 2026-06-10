@@ -29,15 +29,22 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import {
+  Wallet,
+  TrendingUp,
+  Calendar,
+} from "lucide-react";
 
 const StatCard = ({ label, value, sub, icon, trend }) => (
   <Card>
     <CardContent>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <span style={{ fontSize: 11, textTransform: "uppercase" }}>
           {label}
         </span>
-        <span>{icon}</span>
+        <div style={{ color: "#666" }}>
+          {icon}
+        </div>
       </div>
 
       <div style={{ fontSize: 26, fontWeight: 900 }}>{value}</div>
@@ -152,21 +159,21 @@ export default function ExpenseDashboard() {
           label="Total"
           value={`${CURRENCY} ${total}`}
           sub="All expenses"
-          icon={CURRENCY}
+          icon={<Wallet size={24} />}
         />
 
         <StatCard
           label="Highest"
           value={`${CURRENCY} ${highest?.amount || 0}`}
           sub={highest?.title || "None"}
-          icon="Max"
+          icon={<TrendingUp size={24} />}
         />
 
         <StatCard
           label="Monthly"
           value={`${CURRENCY} ${monthly}`}
           sub="This month"
-          icon="30d"
+          icon={<Calendar size={24} />}
         />
       </div>
 

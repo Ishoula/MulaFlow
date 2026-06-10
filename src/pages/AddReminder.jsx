@@ -1,5 +1,11 @@
 import React, { useState } from "react";
+import {
+  Bell,
+  Clock3,
+  CheckCircle2,
+} from "lucide-react";
 import { setReminder } from "../api/reminder";
+import DashboardLayout from "@/components/DashboardLayout";
 
 function AddReminder() {
   const [enabled, setEnabled] = useState(true);
@@ -14,99 +20,108 @@ function AddReminder() {
     setMessage("");
 
     try {
-      const res = await setReminder(enabled, interval);
-      setMessage("Reminder saved successfully ✅");
-      console.log(res);
+      await setReminder(enabled, interval);
+
+      setMessage(
+        "Reminder settings saved successfully."
+      );
     } catch (err) {
-      setMessage("Failed to save reminder ❌");
-      window.alert("Error: " + (err.message || "Unknown error"));
       console.error(err);
+
+      setMessage(
+        "Failed to save reminder settings."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      <h2>Reminder Settings</h2>
+    <DashboardLayout>
+      <div className="reminder-page">
+        <div className="page-header">
+          <div>
+            <h1>Reminder Settings</h1>
+            <p>
+              Configure how often MulaFlow checks
+              your spending and generates alerts.
+            </p>
+          </div>
+        </div>
 
-      <form onSubmit={handleSubmit} style={styles.form}>
+        <div className="panel reminder-panel">
+          <div className="panel-header">
+            <span className="reminder-header">
+              <Bell size={18} />
+              Spending Reminders
+            </span>
+          </div>
 
-        {/* ENABLE TOGGLE */}
-        <label style={styles.label}>
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => setEnabled(e.target.checked)}
-          />
-          Enable Reminders
-        </label>
-
-        {/* INTERVAL SELECT */}
-        <label style={styles.label}>
-          Reminder Interval
-          <select
-            value={interval}
-            onChange={(e) => setInterval(Number(e.target.value))}
-            style={styles.select}
+          <form
+            onSubmit={handleSubmit}
+            className="reminder-form"
           >
-            <option value={1}>Every 1 minute</option>
-            <option value={15}>Every 15 minutes</option>
-            <option value={30}>Every 30 minutes</option>
-            <option value={60}>Every 1 hour</option>
-            <option value={1440}>Every 1 day</option>
-          </select>
-        </label>
+            <div className="reminder-toggle">
+              <label className="reminder-checkbox">
+                <input
+                  type="checkbox"
+                  checked={enabled}
+                  onChange={(e) =>
+                    setEnabled(e.target.checked)
+                  }
+                />
 
-        {/* SUBMIT BUTTON */}
-        <button style={styles.button} disabled={loading}>
-          {loading ? "Saving..." : "Save Reminder"}
-        </button>
+                <span>Enable reminders</span>
+              </label>
+            </div>
 
-        {/* MESSAGE */}
-        {message && <p style={styles.message}>{message}</p>}
-      </form>
-    </div>
+            <div className="auth-field">
+              <span>Reminder Interval</span>
+
+              <div className="reminder-input-wrap">
+                <Clock3 size={18} />
+
+                <input
+                  type="number"
+                  min="1"
+                  value={interval}
+                  onChange={(e) =>
+                    setInterval(
+                      Number(e.target.value)
+                    )
+                  }
+                  className="mf-input"
+                  placeholder="Enter minutes"
+                />
+              </div>
+
+              <small className="reminder-help">
+                Example: 30 = every 30 minutes,
+                1440 = once per day
+              </small>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="mf-btn mf-btn-primary"
+            >
+              {loading
+                ? "Saving..."
+                : "Save Reminder"}
+            </button>
+
+            {message && (
+              <div className="reminder-message">
+                <CheckCircle2 size={16} />
+                {message}
+              </div>
+            )}
+          </form>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
 
 export default AddReminder;
-
-const styles = {
-  container: {
-    maxWidth: "400px",
-    margin: "40px auto",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    fontFamily: "Arial",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  label: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
-    fontSize: "14px",
-  },
-  select: {
-    padding: "8px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    padding: "10px",
-    backgroundColor: "#2d6cdf",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  message: {
-    fontSize: "14px",
-    color: "green",
-  },
-};

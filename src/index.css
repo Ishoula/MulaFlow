@@ -950,6 +950,290 @@ body {
   justify-content: space-between;
 }
 
+/* ── Alerts Page ───────────────────────────────────── */
+
+.alerts-page {
+  display: grid;
+  gap: 24px;
+}
+
+.alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.alerts-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alerts-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alerts-title svg {
+  color: var(--gold);
+}
+
+.alerts-title h1 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1;
+}
+
+.alerts-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.alerts-subtitle {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+
+.alerts-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(420px, 1fr)
+  );
+  gap: 20px;
+}
+
+.alert-card {
+  position: relative;
+  padding: 22px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.alert-card:hover {
+  transform: translateY(-3px);
+}
+
+.alert-unread::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.alert-read {
+  opacity: 0.8;
+}
+
+.alert-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.alert-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.alert-unread .alert-status {
+  color: var(--gold);
+}
+
+.alert-read .alert-status {
+  color: var(--ink-muted);
+}
+
+.alert-date {
+  color: var(--ink-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.alert-message {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.alert-stats {
+  display: flex;
+  gap: 20px;
+  margin: 18px 0;
+}
+
+.alert-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-stat svg {
+  color: var(--brown);
+}
+
+.alert-stat span {
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.alert-stat strong {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.alert-card .mf-btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.alerts-empty {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.alerts-empty svg {
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.alerts-empty h3 {
+  margin: 0 0 10px;
+}
+
+.alerts-empty p {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.alerts-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .alerts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .alerts-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .alerts-title h1 {
+    font-size: 28px;
+  }
+}
+
+/* ── Reminder Page ─────────────────────────────── */
+
+.reminder-page {
+  max-width: 720px;
+}
+
+.reminder-panel {
+  overflow: visible;
+}
+
+.reminder-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reminder-header svg {
+  color: var(--gold);
+}
+
+.reminder-form {
+  padding: 24px;
+  display: grid;
+  gap: 24px;
+}
+
+.reminder-toggle {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.reminder-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.reminder-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--ink);
+}
+
+.reminder-input-wrap {
+  position: relative;
+}
+
+.reminder-input-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--brown);
+}
+
+.reminder-input-wrap .mf-input {
+  padding-left: 42px;
+}
+
+.reminder-help {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink-muted);
+  font-size: 12px;
+}
+
+.reminder-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #15803d;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reminder-message svg {
+  flex-shrink: 0;
+}
+
 /* ── Scrollbar ─────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
