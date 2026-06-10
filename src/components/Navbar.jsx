@@ -1,4 +1,13 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  DollarSign,
+  Plus,
+  Clock,
+  Bell,
+  LogOut,
+  User,
+} from "lucide-react";
 
 const getStoredName = () => {
   const storedName = localStorage.getItem("name");
@@ -9,11 +18,11 @@ const getStoredName = () => {
 };
 
 const navItems = [
-  { to: "/dashboard", icon: "▣", label: "Dashboard" },
-  { to: "/expenses", icon: "$", label: "Expenses" },
-  { to: "/expenses/new", icon: "+", label: "Add expense" },
-  { to:"/reminders/new", icon: "⏰", label: "Reminders" },
-  { to:"/alerts", icon: "🔔", label: "Alerts" }
+  { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
+  { to: "/expenses", icon: <DollarSign size={20} />, label: "Expenses" },
+  { to: "/expenses/new", icon: <Plus size={20} />, label: "Add expense" },
+  { to:"/reminders/new", icon: <Clock size={20} />, label: "Reminders" },
+  { to:"/alerts", icon: <Bell size={20} />, label: "Alerts" }
 ];
 
 export default function Navbar() {
@@ -42,19 +51,19 @@ export default function Navbar() {
               `dash-nav-link${isActive ? " active" : ""}`
             }
           >
-            <span aria-hidden="true">{item.icon}</span>
+            {item.icon}
             {item.label}
           </NavLink>
         ))}
 
         <button className="dash-nav-link" type="button" onClick={logout}>
-          <span aria-hidden="true">←</span>
+          <LogOut size={20} />
           Logout
         </button>
       </nav>
 
       <div className="dash-user">
-        <span aria-hidden="true">◎</span>
+        <User size={20} />
         <span>{name}</span>
       </div>
     </aside>
