@@ -6,7 +6,7 @@ import axios from "axios";
 // const BASE_URL = process.env.BASE_URL 
 
 const api = axios.create({
-  baseURL: "http://localhost:2727/api",
+  baseURL: "https://mulaflow-backend.onrender.com/api",
 });
 
 // 🔐 INTERCEPTOR (AUTO ATTACH TOKEN)
