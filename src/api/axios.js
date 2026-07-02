@@ -12,8 +12,9 @@ const api = axios.create({
 // 🔐 INTERCEPTOR (AUTO ATTACH TOKEN)
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  const isAuthRequest = config.url?.startsWith("/auth/");
 
-  if (token) {
+  if (token && !isAuthRequest) {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
@@ -23,7 +24,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    const isAuthRequest = error.config?.url?.startsWith("/auth/");
+    const isUnauthorized = error.response?.status === 401 || error.response?.status === 403;
+
+    if (isUnauthorized && !isAuthRequest) {
       localStorage.removeItem("token");
       localStorage.removeItem("name");
       localStorage.removeItem("email");

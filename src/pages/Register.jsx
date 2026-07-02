@@ -26,12 +26,26 @@ export default function Register() {
       setLoading(true);
       setError("");
 
-      await registerUser(form);
+      const res = await registerUser(form);
+
+      if (res.status < 200 || res.status >= 300 || res.data?.error) {
+        throw new Error(res.data?.error || "Registration failed");
+      }
 
       navigate("/login");
 
-    } catch {
-      setError("Registration failed. Check your details and try again.");
+    } catch (err) {
+      const status = err.response?.status;
+      const requestUrl = `${err.config?.baseURL || ""}${err.config?.url || ""}`;
+      const fallbackMessage = status
+        ? `Registration failed (${status})${requestUrl ? ` at ${requestUrl}` : ""}.`
+        : "Registration failed. Check your details and try again.";
+
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        fallbackMessage
+      );
     } finally {
       setLoading(false);
     }
