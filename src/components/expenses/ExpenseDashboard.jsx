@@ -8,7 +8,6 @@ import {
   getTotalExpenses,
   getHighestExpense,
   getMonthlyTotal,
-  getByCategory,
 } from "@/api/expenseApi";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,7 +20,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 
 export default function ExpenseDashboard() {
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const [total, setTotal] = useState(0);
   const [highest, setHighest] = useState(null);
@@ -36,16 +34,9 @@ export default function ExpenseDashboard() {
 
   const [categoryFilter, setCategoryFilter] = useState("");
 
-  useEffect(() => {
-    loadAll();
-    loadStats();
-  }, []);
-
   const loadAll = async () => {
-    setLoading(true);
     const data = await getAllExpenses();
     setExpenses(data);
-    setLoading(false);
   };
 
   const loadStats = async () => {
@@ -57,6 +48,12 @@ export default function ExpenseDashboard() {
     setHighest(h);
     setMonthly(m);
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadAll();
+    loadStats();
+  }, []);
 
   const handleCreate = async () => {
     await createExpense(form);

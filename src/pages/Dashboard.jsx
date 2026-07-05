@@ -128,8 +128,9 @@ export default function ExpenseDashboard() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadExpenses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, size, sortBy]);
 
   useEffect(() => {
