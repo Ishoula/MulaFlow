@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../api/authApi";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -141,7 +142,7 @@ export default function Register() {
           </label>
 
           <button className="auth-submit" type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? <Skeleton /> : "Create account"}
           </button>
 
           <p className="auth-switch">

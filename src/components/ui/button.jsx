@@ -1,6 +1,13 @@
-import * as React from "react";
+import { Skeleton } from "./skeleton";
 
-export function Button({ className = "", variant = "primary", ...props }) {
+export function Button({
+  children,
+  className = "",
+  loading = false,
+  variant = "primary",
+  disabled,
+  ...props
+}) {
   const variants = {
     primary: "mf-btn-primary",
     ghost: "mf-btn-ghost",
@@ -12,7 +19,11 @@ export function Button({ className = "", variant = "primary", ...props }) {
   return (
     <button
       className={`mf-btn ${variantClass} ${className}`.trim()}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
-    />
+    >
+      {loading ? <Skeleton className="skeleton-button-label" /> : children}
+    </button>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Bell,
   Clock3,
@@ -106,9 +106,11 @@ function AddReminder() {
               disabled={loading}
               className="mf-btn mf-btn-primary"
             >
-              {loading
-                ? "Saving..."
-                : "Save Reminder"}
+              {loading ? (
+                <span className="mf-skeleton skeleton-button-label" aria-hidden="true" />
+              ) : (
+                "Save Reminder"
+              )}
             </button>
 
             {message && (

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export function Select({ children, className = "", onValueChange, onChange, ...props }) {
   const handleChange = (event) => {
     onChange?.(event);

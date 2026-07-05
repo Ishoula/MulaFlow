@@ -18,6 +18,7 @@ export const useReminders = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchReminders();
 
     // 🔁 auto refresh every 5 minutes

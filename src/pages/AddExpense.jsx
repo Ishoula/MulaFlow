@@ -91,8 +91,8 @@ export default function AddExpense() {
             />
 
             <div className="form-actions">
-              <Button type="submit" disabled={saving}>
-                {saving ? "Saving..." : "Save expense"}
+              <Button type="submit" loading={saving}>
+                Save expense
               </Button>
               <Button
                 type="button"

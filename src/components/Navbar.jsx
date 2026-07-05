@@ -8,14 +8,7 @@ import {
   LogOut,
   User,
 } from "lucide-react";
-
-const getStoredName = () => {
-  const storedName = localStorage.getItem("name");
-
-  return storedName && storedName !== "undefined" && storedName !== "null"
-    ? storedName
-    : "User";
-};
+import { getStoredName } from "@/utils/storage";
 
 const navItems = [
   { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
@@ -69,5 +62,3 @@ export default function Navbar() {
     </aside>
   );
 }
-
-export { getStoredName };

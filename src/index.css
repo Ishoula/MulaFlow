@@ -683,6 +683,218 @@ body {
   font-weight: 700;
 }
 
+.route-skeleton {
+  min-height: 100vh;
+  padding: 40px 36px;
+}
+
+/* ── Skeleton Loading ──────────────────────────────── */
+.mf-skeleton {
+  display: block;
+  min-height: 1em;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(10,10,10,0.06) 25%,
+      rgba(255,255,255,0.48) 38%,
+      rgba(10,10,10,0.06) 63%
+    );
+  background-size: 220% 100%;
+  animation: shimmer 1.35s ease-in-out infinite;
+}
+
+.skeleton-header-copy {
+  display: grid;
+  gap: 10px;
+  width: min(100%, 360px);
+}
+
+.skeleton-title {
+  width: min(100%, 310px);
+  height: 37px;
+}
+
+.skeleton-alerts-title {
+  width: 118px;
+}
+
+.skeleton-subtitle {
+  width: min(80%, 230px);
+  height: 16px;
+}
+
+.skeleton-heading-small {
+  width: 150px;
+  height: 16px;
+}
+
+.skeleton-label {
+  width: 76px;
+  height: 12px;
+}
+
+.skeleton-value {
+  width: 155px;
+  height: 31px;
+  margin-top: 18px;
+}
+
+.skeleton-caption,
+.skeleton-caption-wide {
+  height: 13px;
+  margin-top: 12px;
+}
+
+.skeleton-caption {
+  width: 118px;
+}
+
+.skeleton-caption-wide {
+  width: 160px;
+}
+
+.skeleton-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+}
+
+.skeleton-button,
+.auth-submit .mf-skeleton,
+.mf-btn .mf-skeleton {
+  width: 118px;
+  height: 40px;
+}
+
+.skeleton-button-label {
+  width: 86px;
+  height: 13px;
+  min-height: 0;
+  border-radius: 999px;
+}
+
+.skeleton-control {
+  width: 100%;
+  height: 42px;
+}
+
+.skeleton-stat-card {
+  padding: 24px;
+}
+
+.skeleton-stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.skeleton-chart-card {
+  margin-top: 20px;
+}
+
+.skeleton-chart {
+  display: flex;
+  align-items: end;
+  gap: 18px;
+  height: 250px;
+  padding: 28px 26px 22px;
+}
+
+.skeleton-chart-bar {
+  flex: 1;
+  min-width: 22px;
+}
+
+.skeleton-table {
+  width: 100%;
+}
+
+.skeleton-table-head,
+.skeleton-table-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 0.8fr;
+  gap: 18px;
+  align-items: center;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.skeleton-table-head {
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.skeleton-table-row:last-child {
+  border-bottom: 0;
+}
+
+.skeleton-table-cell {
+  height: 14px;
+}
+
+.skeleton-table-head .skeleton-table-cell {
+  height: 11px;
+  width: 70%;
+}
+
+.mf-skeleton-text {
+  display: grid;
+  gap: 10px;
+}
+
+.mf-skeleton-line {
+  height: 15px;
+}
+
+.skeleton-pill {
+  width: 82px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.skeleton-date {
+  width: 92px;
+  height: 13px;
+}
+
+.auth-submit .mf-skeleton,
+.mf-btn .mf-skeleton {
+  min-height: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.18) 25%,
+      rgba(255,255,255,0.42) 38%,
+      rgba(255,255,255,0.18) 63%
+    );
+  background-size: 220% 100%;
+}
+
+.mf-btn .skeleton-button-label {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,0.18) 25%,
+      rgba(255,255,255,0.42) 38%,
+      rgba(255,255,255,0.18) 63%
+    );
+  background-size: 220% 100%;
+}
+
+.auth-submit .mf-skeleton {
+  width: 92px;
+  height: 14px;
+  margin: 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-skeleton {
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .dash-layout { flex-direction: column; }
   .dash-sidebar {
@@ -1232,6 +1444,17 @@ body {
 
 .reminder-message svg {
   flex-shrink: 0;
+}
+
+.reminder-box {
+  display: grid;
+  gap: 12px;
+}
+
+.reminder-box-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
 }
 
 /* ── Scrollbar ─────────────────────────────────────── */

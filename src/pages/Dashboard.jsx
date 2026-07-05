@@ -9,7 +9,7 @@ import {
   getPaginatedExpenses,
 } from "@/api/expenseApi";
 import DashboardLayout from "@/components/DashboardLayout";
-import { getStoredName } from "@/components/Navbar";
+import { getStoredName } from "@/utils/storage";
 import { CURRENCY } from "@/constants/currency";
 import { EXPENSE_CATEGORIES } from "@/constants/expenses";
 
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DashboardSkeleton } from "@/components/ui/skeleton";
 import {
   BarChart,
   Bar,
@@ -59,7 +60,7 @@ const StatCard = ({ label, value, sub, icon, trend }) => (
 
 export default function ExpenseDashboard() {
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page] = useState(0);
   const [size] = useState(5);
   const [sortBy] = useState("date");
@@ -127,10 +128,12 @@ export default function ExpenseDashboard() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
     loadExpenses();
   }, [page, size, sortBy]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadStats();
   }, []);
 
@@ -139,97 +142,99 @@ export default function ExpenseDashboard() {
     amount: expense.amount,
   }));
 
-  if (loading) {
-    return <div style={{ padding: 40 }}>Loading...</div>;
-  }
-
   return (
     <DashboardLayout>
-      <div className="page-header">
-        <div>
-          <h1>Welcome back, {name}</h1>
-          <p>Your financial overview</p>
-        </div>
-      </div>
-
-      {error && <div className="error-banner">{error}</div>}
-
-      <div className="stats-grid">
-        <StatCard
-          label="Total"
-          value={`${CURRENCY} ${total}`}
-          sub="All expenses"
-          icon={<Wallet size={24} />}
-        />
-
-        <StatCard
-          label="Highest"
-          value={`${CURRENCY} ${highest?.amount || 0}`}
-          sub={highest?.title || "None"}
-          icon={<TrendingUp size={24} />}
-        />
-
-        <StatCard
-          label="Monthly"
-          value={`${CURRENCY} ${monthly}`}
-          sub="This month"
-          icon={<Calendar size={24} />}
-        />
-      </div>
-
-      <Card>
-        <CardHeader>Quick Add</CardHeader>
-        <CardContent>
-          <div className="quick-add-form">
-            <Input
-              placeholder="Title"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-            />
-
-            <Input
-              type="number"
-              placeholder="Amount"
-              value={form.amount}
-              onChange={(e) => setForm({ ...form, amount: e.target.value })}
-            />
-
-            <select
-              className="mf-select"
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-            >
-              {EXPENSE_CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-
-            <Input
-              type="date"
-              value={form.date}
-              onChange={(e) => setForm({ ...form, date: e.target.value })}
-            />
-
-            <Button onClick={handleCreate}>Add Expense</Button>
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
+        <>
+          <div className="page-header">
+            <div>
+              <h1>Welcome back, {name}</h1>
+              <p>Your financial overview</p>
+            </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card style={{ marginTop: 20 }}>
-        <CardHeader>Recent spending</CardHeader>
+          {error && <div className="error-banner">{error}</div>}
 
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={chartData}>
-            <CartesianGrid />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="amount" fill="#000" />
-          </BarChart>
-        </ResponsiveContainer>
-      </Card>
+          <div className="stats-grid">
+            <StatCard
+              label="Total"
+              value={`${CURRENCY} ${total}`}
+              sub="All expenses"
+              icon={<Wallet size={24} />}
+            />
+
+            <StatCard
+              label="Highest"
+              value={`${CURRENCY} ${highest?.amount || 0}`}
+              sub={highest?.title || "None"}
+              icon={<TrendingUp size={24} />}
+            />
+
+            <StatCard
+              label="Monthly"
+              value={`${CURRENCY} ${monthly}`}
+              sub="This month"
+              icon={<Calendar size={24} />}
+            />
+          </div>
+
+          <Card>
+            <CardHeader>Quick Add</CardHeader>
+            <CardContent>
+              <div className="quick-add-form">
+                <Input
+                  placeholder="Title"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                />
+
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  value={form.amount}
+                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                />
+
+                <select
+                  className="mf-select"
+                  value={form.category}
+                  onChange={(e) => setForm({ ...form, category: e.target.value })}
+                >
+                  {EXPENSE_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+
+                <Input
+                  type="date"
+                  value={form.date}
+                  onChange={(e) => setForm({ ...form, date: e.target.value })}
+                />
+
+                <Button onClick={handleCreate}>Add Expense</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card style={{ marginTop: 20 }}>
+            <CardHeader>Recent spending</CardHeader>
+
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={chartData}>
+                <CartesianGrid />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="amount" fill="#000" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
+        </>
+      )}
     </DashboardLayout>
   );
 }

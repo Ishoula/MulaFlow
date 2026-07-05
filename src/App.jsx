@@ -1,18 +1,44 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import LandingPage from "./pages/LandingPage";
-import Dashboard from "./pages/Dashboard";
-import Expenses from "./pages/Expenses";
-import AddExpense from "./pages/AddExpense";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import AddReminder from "./pages/AddReminder";
-import AlertsPage from "./pages/AlertsPage";
+import DashboardLayout from "./components/DashboardLayout";
+import { DashboardSkeleton } from "./components/ui/skeleton";
+
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Expenses = lazy(() => import("./pages/Expenses"));
+const AddExpense = lazy(() => import("./pages/AddExpense"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const AddReminder = lazy(() => import("./pages/AddReminder"));
+const AlertsPage = lazy(() => import("./pages/AlertsPage"));
+
+function AppFallback() {
+  const isAppRoute = !["/", "/login", "/register"].includes(
+    window.location.pathname
+  );
+
+  if (isAppRoute) {
+    return (
+      <DashboardLayout>
+        <DashboardSkeleton />
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <main className="route-skeleton" aria-label="Loading page">
+      <DashboardSkeleton />
+    </main>
+  );
+}
+
 function App() {
 
   return (
     <BrowserRouter>
+      <Suspense fallback={<AppFallback />}>
 
       <Routes>
 
@@ -65,6 +91,7 @@ function App() {
         />
 
       </Routes>
+      </Suspense>
 
     </BrowserRouter>
   );

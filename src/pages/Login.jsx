@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api/authApi";
 import { CURRENCY } from "@/constants/currency";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -124,7 +125,7 @@ export default function Login() {
           </label>
 
           <button className="auth-submit" type="submit" disabled={loading}>
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? <Skeleton /> : "Sign in"}
           </button>
 
           <p className="auth-switch">

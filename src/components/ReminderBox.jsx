@@ -1,10 +1,10 @@
-import React from "react";
-import { useReminders } from "../hooks/useReminders";
+import { useReminders } from "../hooks/userReminder";
+import { ReminderBoxSkeleton } from "./ui/skeleton";
 
 const ReminderBox = () => {
   const { reminders, loading } = useReminders();
 
-  if (loading) return <p>Loading reminders...</p>;
+  if (loading) return <ReminderBoxSkeleton />;
 
   if (reminders.length === 0) {
     return <p>No reminders right now 🎉</p>;

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 export function Badge({ children, className = "", variant = "other", ...props }) {
   const variants = {
     food: "cat-food",

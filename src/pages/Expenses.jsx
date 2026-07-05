@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Select, SelectItem } from "@/components/ui/select";
+import { TableSkeleton } from "@/components/ui/skeleton";
 
 import {
   Table,
@@ -27,7 +28,7 @@ export default function Expenses() {
   const navigate = useNavigate();
 
   const [expenses, setExpenses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [categoryFilter, setCategoryFilter] = useState("");
@@ -69,6 +70,7 @@ export default function Expenses() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
     loadExpenses();
   }, [page, size, sortBy, direction]);
 
@@ -187,9 +189,7 @@ export default function Expenses() {
         </CardHeader>
 
         {loading ? (
-          <div className="empty-state">
-            Loading expenses...
-          </div>
+          <TableSkeleton rows={size > 10 ? 8 : size} />
         ) : (
           <Table>
             <TableHeader>

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   BellRing,
   RefreshCw,
   CheckCircle2,
   CircleAlert,
-  CalendarDays,
   Wallet,
 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
+import { AlertsPageSkeleton } from "@/components/ui/skeleton";
 
 import {
   getReminders,
@@ -52,28 +52,20 @@ const AlertsPage = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAlerts();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="empty-state">
-        Loading alerts...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="alerts-error">
-        <CircleAlert size={18} />
-        {error}
-      </div>
-    );
-  }
-
   return (
     <DashboardLayout>
+      {loading ? (
+        <AlertsPageSkeleton />
+      ) : error ? (
+        <div className="alerts-error">
+          <CircleAlert size={18} />
+          {error}
+        </div>
+      ) : (
       <div className="alerts-page">
         <div className="alerts-header">
           <div className="alerts-header-left">
@@ -173,6 +165,7 @@ const AlertsPage = () => {
           </div>
         )}
       </div>
+      )}
     </DashboardLayout>
   );
 };
