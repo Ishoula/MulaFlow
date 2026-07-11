@@ -33,7 +33,7 @@ export default function Register() {
         throw new Error(res.data?.error || "Registration failed");
       }
 
-      navigate("/login");
+      navigate(`/verify-email?email=${encodeURIComponent(form.email)}`);
 
     } catch (err) {
       const status = err.response?.status;
