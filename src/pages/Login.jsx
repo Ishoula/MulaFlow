@@ -9,19 +9,61 @@ export default function Login() {
     email: "",
     password: ""
   });
+  const [errors, setErrors] = useState({
+    email: "",
+    password: ""
+  });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
+  const validateField = (name, value) => {
+    let fieldError = "";
+    
+    if (name === "email") {
+      if (!value.trim()) {
+        fieldError = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        fieldError = "Please enter a valid email address";
+      }
+    } else if (name === "password") {
+      if (!value) {
+        fieldError = "Password is required";
+      }
+    }
+    
+    return fieldError;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    const fieldError = validateField(name, value);
+    setErrors({ ...errors, [name]: fieldError });
+    
     setError("");
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      email: validateField("email", form.email),
+      password: validateField("password", form.password)
+    };
+    
+    setErrors(newErrors);
+    
+    return !Object.values(newErrors).some(error => error);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -99,8 +141,9 @@ export default function Login() {
               value={form.email}
               onChange={handleChange}
               autoComplete="email"
-              required
+              className={errors.email ? "input-error" : ""}
             />
+            {errors.email && <p className="field-error">{errors.email}</p>}
           </label>
 
           <label className="auth-field">
@@ -113,7 +156,7 @@ export default function Login() {
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                required
+                className={errors.password ? "input-error" : ""}
               />
               <button
                 type="button"
@@ -122,6 +165,7 @@ export default function Login() {
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+            {errors.password && <p className="field-error">{errors.password}</p>}
           </label>
 
           <button className="auth-submit" type="submit" disabled={loading}>

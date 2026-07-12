@@ -448,6 +448,17 @@ body {
   box-shadow: 0 0 0 3px rgba(10,10,10,0.06);
 }
 
+.auth-field input.input-error {
+  border-color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(185,28,28,0.08);
+}
+
+.field-error {
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .password-field {
   position: relative;
 }
