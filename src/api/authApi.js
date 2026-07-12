@@ -9,5 +9,9 @@ export const registerUser = async (data) => {
 };
 
 export const verifyEmail = async (token) => {
-  return axios.get(`/verify?token=${encodeURIComponent(token)}`);
+  return axios.get(`/auth/verify?token=${encodeURIComponent(token)}`);
+};
+
+export const resendVerificationEmail = async (email) => {
+  return axios.post("/auth/resend-verification", { email });
 };

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { verifyEmail } from "../api/authApi";
+import { verifyEmail, resendVerificationEmail } from "../api/authApi";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
 
   const emailParam = searchParams.get("email") || "";
@@ -28,6 +30,31 @@ export default function VerifyEmail() {
         err.response?.data?.error ||
         "Failed to verify email. The link may have expired."
       );
+    }
+  };
+
+  const handleResend = async () => {
+    const targetEmail = emailParam || emailInput;
+    if (!targetEmail) {
+      setMessage("Please provide your email.");
+      return;
+    }
+
+    try {
+      setResending(true);
+      const res = await resendVerificationEmail(targetEmail);
+
+      if (res.status >= 200 && res.status < 300) {
+        setMessage("Verification email resent! Check your inbox.");
+      }
+    } catch (err) {
+      setMessage(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Failed to resend verification email."
+      );
+    } finally {
+      setResending(false);
     }
   };
 
@@ -101,6 +128,28 @@ export default function VerifyEmail() {
           {status === "error" && (
             <div className="flex flex-col py-4">
               {message && <div className="error-banner mb-4">{message}</div>}
+              
+              {!emailParam && (
+                <label className="auth-field mb-4">
+                  <span>Email address</span>
+                  <input
+                    type="email"
+                    placeholder="you@example.com"
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    autoComplete="email"
+                    required
+                  />
+                </label>
+              )}
+
+              <button
+                className="auth-submit"
+                onClick={handleResend}
+                disabled={resending}
+              >
+                {resending ? <Skeleton /> : "Resend verification email"}
+              </button>
 
               <p className="auth-switch mt-4">
                 Remember your email is already verified?
@@ -118,6 +167,14 @@ export default function VerifyEmail() {
               </p>
 
               {message && <div className="error-banner mb-4">{message}</div>}
+
+              <button
+                className="auth-submit"
+                onClick={handleResend}
+                disabled={resending}
+              >
+                {resending ? <Skeleton /> : "Resend verification email"}
+              </button>
 
               <p className="auth-switch mt-4">
                 Already verified?
