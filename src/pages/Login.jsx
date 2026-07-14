@@ -21,7 +21,7 @@ export default function Login() {
 
   const validateField = (name, value) => {
     let fieldError = "";
-    
+
     if (name === "email") {
       if (!value.trim()) {
         fieldError = "Email is required";
@@ -31,19 +31,31 @@ export default function Login() {
     } else if (name === "password") {
       if (!value) {
         fieldError = "Password is required";
+      } else if (value.length < 8) {
+        fieldError = "Password must be at least 8 characters";
+      } else if (!/[a-z]/.test(value)) {
+        fieldError = "Password must include at least one lowercase letter";
+      } else if (!/[A-Z]/.test(value)) {
+        fieldError = "Password must include at least one uppercase letter";
+      } else if (!/[0-9]/.test(value)) {
+        fieldError = "Password must include at least one number";
+      } else if (!/[!@^*_+\-?]/.test(value)) {
+        fieldError = "Password must include at least one symbol (!, @, ^, *, _, +, -, ?)";
+      } else if (/['";\-<>{}[\]()|&\\`~#$%=]/.test(value)) {
+        fieldError = "Password contains disallowed characters";
       }
     }
-    
+
     return fieldError;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    
+
     const fieldError = validateField(name, value);
     setErrors({ ...errors, [name]: fieldError });
-    
+
     setError("");
   };
 
@@ -52,9 +64,9 @@ export default function Login() {
       email: validateField("email", form.email),
       password: validateField("password", form.password)
     };
-    
+
     setErrors(newErrors);
-    
+
     return !Object.values(newErrors).some(error => error);
   };
 

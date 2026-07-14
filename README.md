@@ -8,6 +8,7 @@ The app is designed to work with a JWT-protected backend API. Users can create a
 
 - Landing page for MulaFlow with calls to sign in or create an account
 - User registration and login
+  mixed-case letters, numbers and symbols- Email verification after registration
 - JWT-based protected routes
 - Automatic auth token attachment for protected API calls
 - Automatic logout/redirect when protected API calls return unauthorized responses
@@ -21,6 +22,7 @@ The app is designed to work with a JWT-protected backend API. Users can create a
 - Alerts page for viewing and marking reminders as read
 - Responsive app shell with sidebar navigation
 - Reusable UI primitives for buttons, cards, inputs, selects, badges, and tables
+- Form input validation for login and registration
 
 ## Tech Stack
 
@@ -38,7 +40,7 @@ The app is designed to work with a JWT-protected backend API. Users can create a
 ```text
 src/
   api/
-    authApi.js        # Login and registration requests
+    authApi.js        # Login, registration, and email verification requests
     axios.js          # Shared Axios instance and auth interceptors
     expenseApi.js     # Expense CRUD, filters, stats, and pagination
     reminder.js       # Reminder and alert API calls
@@ -56,6 +58,7 @@ src/
     LandingPage.jsx
     Login.jsx
     Register.jsx
+    VerifyEmail.jsx
     Dashboard.jsx
     Expenses.jsx
     AddExpense.jsx
@@ -93,7 +96,7 @@ src/api/axios.js
 By default, it points to:
 
 ```text
-http://localhost:2727/api
+https://mulaflow-backend.onrender.com/api
 ```
 
 Update the `baseURL` if your backend runs somewhere else, for example:
@@ -144,16 +147,17 @@ Runs ESLint against the project.
 
 ## Application Routes
 
-| Route | Access | Description |
-| --- | --- | --- |
-| `/` | Public | Landing page |
-| `/login` | Public | User login |
-| `/register` | Public | User registration |
-| `/dashboard` | Protected | Spending dashboard and quick expense entry |
-| `/expenses` | Protected | Paginated expense management |
-| `/expenses/new` | Protected | Add a new expense |
-| `/reminders/new` | Protected | Configure spending reminder settings |
-| `/alerts` | Protected | View reminder alerts |
+| Route            | Access    | Description                                |
+| ---------------- | --------- | ------------------------------------------ |
+| `/`              | Public    | Landing page                               |
+| `/login`         | Public    | User login                                 |
+| `/register`      | Public    | User registration                          |
+| `/verify-email`  | Public    | Email verification page                    |
+| `/dashboard`     | Protected | Spending dashboard and quick expense entry |
+| `/expenses`      | Protected | Paginated expense management               |
+| `/expenses/new`  | Protected | Add a new expense                          |
+| `/reminders/new` | Protected | Configure spending reminder settings       |
+| `/alerts`        | Protected | View reminder alerts                       |
 
 Protected routes require a `token` value in `localStorage`.
 
@@ -163,10 +167,12 @@ The frontend expects the backend API to expose these endpoints under the configu
 
 ### Auth
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `POST` | `/auth/login` | Authenticate a user |
-| `POST` | `/auth/register` | Create a user account |
+| Method | Endpoint                    | Purpose                     |
+| ------ | --------------------------- | --------------------------- |
+| `POST` | `/auth/login`               | Authenticate a user         |
+| `POST` | `/auth/register`            | Create a user account       |
+| `GET`  | `/auth/verify?token=...`    | Verify a user's email       |
+| `POST` | `/auth/resend-verification` | Resend a verification email |
 
 The login response should include a token:
 
@@ -180,29 +186,50 @@ The login response should include a token:
 
 ### Expenses
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/expenses` | Get expenses |
-| `POST` | `/expenses` | Create an expense |
-| `PUT` | `/expenses/{id}` | Update an expense |
-| `DELETE` | `/expenses/{id}` | Delete an expense |
-| `GET` | `/expenses/category/{category}` | Get expenses by category |
-| `GET` | `/expenses/above/{amount}` | Get expenses above an amount |
-| `GET` | `/expenses/range?start=&end=` | Get expenses by date range |
-| `GET` | `/expenses/total` | Get total expense amount |
-| `GET` | `/expenses/highest` | Get highest expense |
-| `GET` | `/expenses/monthly?month=&year=` | Get monthly total |
-| `GET` | `/expenses/page?page=&size=&sort=` | Get paginated expenses |
+| Method   | Endpoint                           | Purpose                      |
+| -------- | ---------------------------------- | ---------------------------- |
+| `GET`    | `/expenses`                        | Get expenses                 |
+| `POST`   | `/expenses`                        | Create an expense            |
+| `PUT`    | `/expenses/{id}`                   | Update an expense            |
+| `DELETE` | `/expenses/{id}`                   | Delete an expense            |
+| `GET`    | `/expenses/category/{category}`    | Get expenses by category     |
+| `GET`    | `/expenses/above/{amount}`         | Get expenses above an amount |
+| `GET`    | `/expenses/range?start=&end=`      | Get expenses by date range   |
+| `GET`    | `/expenses/total`                  | Get total expense amount     |
+| `GET`    | `/expenses/highest`                | Get highest expense          |
+| `GET`    | `/expenses/monthly?month=&year=`   | Get monthly total            |
+| `GET`    | `/expenses/page?page=&size=&sort=` | Get paginated expenses       |
 
 ### Reminders and Alerts
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `POST` | `/reminders/settings?enabled=&intervalMinutes=` | Save reminder settings |
-| `GET` | `/reminders` | Get all reminders |
-| `GET` | `/reminders/unread` | Get unread reminders |
-| `PATCH` | `/reminders/{id}/read` | Mark one reminder as read |
-| `PATCH` | `/reminders/read-all` | Mark all reminders as read |
+| Method  | Endpoint                                        | Purpose                    |
+| ------- | ----------------------------------------------- | -------------------------- |
+| `POST`  | `/reminders/settings?enabled=&intervalMinutes=` | Save reminder settings     |
+| `GET`   | `/reminders`                                    | Get all reminders          |
+| `GET`   | `/reminders/unread`                             | Get unread reminders       |
+| `PATCH` | `/reminders/{id}/read`                          | Mark one reminder as read  |
+| `PATCH` | `/reminders/read-all`                           | Mark all reminders as read |
+
+## Password Validation Rules
+
+Passwords must meet the following requirements:
+
+- At least 8 characters long
+- Include at least one uppercase letter (A-Z)
+- Include at least one lowercase letter (a-z)
+- Include at least one number (0-9)
+- Include at least one allowed symbol (!, @, ^, \*, \_, +, -, ?)
+- Must NOT contain disallowed characters: ', ", ;, --, <, >, &, #, $, %, =, (, ), [, ], {, }, |, \, ` (backtick), ~
+
+## Email Verification Flow
+
+After successful registration, users are redirected to `/verify-email?email=...`. The app expects the backend to send an email with a verification link pointing to the frontend's verification page, e.g.:
+
+```text
+https://your-frontend.example.com/verify-email?token=verification-token
+```
+
+When the user opens this link, the VerifyEmail page will automatically call `GET /auth/verify?token=...` on the backend to complete verification.
 
 ## Authentication Flow
 

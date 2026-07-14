@@ -22,7 +22,7 @@ export default function Register() {
 
   const validateField = (name, value) => {
     let fieldError = "";
-    
+
     if (name === "name") {
       if (!value.trim()) {
         fieldError = "Name is required";
@@ -38,22 +38,32 @@ export default function Register() {
     } else if (name === "password") {
       if (!value) {
         fieldError = "Password is required";
-      } else if (value.length < 6) {
-        fieldError = "Password must be at least 6 characters";
+      } else if (value.length < 8) {
+        fieldError = "Password must be at least 8 characters";
+      } else if (!/[a-z]/.test(value)) {
+        fieldError = "Password must include at least one lowercase letter";
+      } else if (!/[A-Z]/.test(value)) {
+        fieldError = "Password must include at least one uppercase letter";
+      } else if (!/[0-9]/.test(value)) {
+        fieldError = "Password must include at least one number";
+      } else if (!/[!@^*_+\-?]/.test(value)) {
+        fieldError = "Password must include at least one symbol (!, @, ^, *, _, +, -, ?)";
+      } else if (/['";\-<>{}[\]()|&\\`~#$%=]/.test(value)) {
+        fieldError = "Password contains disallowed characters";
       }
     }
-    
+
     return fieldError;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    
+
     // Validate the field as the user types
     const fieldError = validateField(name, value);
     setErrors({ ...errors, [name]: fieldError });
-    
+
     // Clear general error when user starts typing
     setError("");
   };
@@ -64,9 +74,9 @@ export default function Register() {
       email: validateField("email", form.email),
       password: validateField("password", form.password)
     };
-    
+
     setErrors(newErrors);
-    
+
     // Check if there are any errors
     return !Object.values(newErrors).some(error => error);
   };
@@ -183,7 +193,7 @@ export default function Register() {
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Create a password"
+                placeholder="Create a password (min 8 chars, mixed case, number, symbol !@^*_+-?)"
                 value={form.password}
                 onChange={handleChange}
                 autoComplete="new-password"
@@ -197,6 +207,35 @@ export default function Register() {
               </button>
             </div>
             {errors.password && <p className="field-error">{errors.password}</p>}
+            <div className="password-rules mt-2">
+              <p className="text-xs text-gray-600 mb-1 font-semibold">Password requirements:</p>
+              <ul className="text-xs space-y-1">
+                <li className={/[a-z]/.test(form.password) ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{/[a-z]/.test(form.password) ? "✓" : "○"}</span>
+                  At least one lowercase letter
+                </li>
+                <li className={/[A-Z]/.test(form.password) ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{/[A-Z]/.test(form.password) ? "✓" : "○"}</span>
+                  At least one uppercase letter
+                </li>
+                <li className={/[0-9]/.test(form.password) ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{/[0-9]/.test(form.password) ? "✓" : "○"}</span>
+                  At least one number
+                </li>
+                <li className={/[!@^*_+\-?]/.test(form.password) ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{/[!@^*_+\-?]/.test(form.password) ? "✓" : "○"}</span>
+                  At least one symbol (!, @, ^, *, _, +, -, ?)
+                </li>
+                <li className={form.password.length >= 8 ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{form.password.length >= 8 ? "✓" : "○"}</span>
+                  At least 8 characters long
+                </li>
+                <li className={!/['";\-<>{}[\]()|&\\`~#$%=]/.test(form.password) && form.password ? "text-green-600" : "text-gray-500"}>
+                  <span className="mr-1">{!/['";\-<>{}[\]()|&\\`~#$%=]/.test(form.password) && form.password ? "✓" : "○"}</span>
+                  No disallowed characters
+                </li>
+              </ul>
+            </div>
           </label>
 
           <button className="auth-submit" type="submit" disabled={loading}>
