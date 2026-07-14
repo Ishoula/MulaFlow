@@ -22,7 +22,7 @@ export default function Register() {
 
   const validateField = (name, value) => {
     let fieldError = "";
-
+    
     if (name === "name") {
       if (!value.trim()) {
         fieldError = "Name is required";
@@ -42,18 +42,18 @@ export default function Register() {
         fieldError = "Password must be at least 6 characters";
       }
     }
-
+    
     return fieldError;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-
+    
     // Validate the field as the user types
     const fieldError = validateField(name, value);
     setErrors({ ...errors, [name]: fieldError });
-
+    
     // Clear general error when user starts typing
     setError("");
   };
@@ -64,9 +64,9 @@ export default function Register() {
       email: validateField("email", form.email),
       password: validateField("password", form.password)
     };
-
+    
     setErrors(newErrors);
-
+    
     // Check if there are any errors
     return !Object.values(newErrors).some(error => error);
   };
